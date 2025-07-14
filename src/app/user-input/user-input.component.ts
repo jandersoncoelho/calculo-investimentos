@@ -1,5 +1,5 @@
-import { Component, EventEmitter, output, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Component, output, signal } from '@angular/core';
 
 import type { InvestmentModel } from '../investiment-input.model';
 
@@ -10,34 +10,30 @@ import type { InvestmentModel } from '../investiment-input.model';
   styleUrls: ['./user-input.component.css'],
 })
 export class UserInputComponent {
-  // calculate = output();
-  @Output() calculate = new EventEmitter<InvestmentModel>();
+  calculate = output<InvestmentModel>();
+  // @Output() calculate = new EventEmitter<InvestmentModel>();
 
   // Default values
-  enteredInitialInvestment = '0';
-  enteredAnnualInvestment = '0';
-  enteredExpectedReturn = '15';
-  enteredDuration = '10';
-
+  enteredInitialInvestment = signal('0');
+  enteredAnnualInvestment = signal('0');
+  enteredExpectedReturn = signal('15');
+  enteredDuration = signal('10');
 
   onReset() {
-    this.enteredInitialInvestment = '0';
-    this.enteredDuration = '10';
-    this.enteredExpectedReturn = '15';
-    this.enteredAnnualInvestment = '10';
+    this.enteredInitialInvestment.set('0');
+    this.enteredAnnualInvestment.set('0');
+    this.enteredDuration.set('10');
+    this.enteredExpectedReturn.set('15');
   }
 
   onSubmit() {
     this.calculate.emit({
-      initialInvestment: +this.enteredInitialInvestment,
-      duration: +this.enteredDuration,
-      expectedReturn: +this.enteredExpectedReturn,
-      annualInvestment: +this.enteredAnnualInvestment
+      // The unary plus operator converts the string value to a number.
+      initialInvestment: +this.enteredInitialInvestment(),
+      duration: +this.enteredDuration(),
+      expectedReturn: +this.enteredExpectedReturn(),
+      annualInvestment: +this.enteredAnnualInvestment(),
     });
-    // console.log('SUBMITED');
-    // console.log('Initial Investment:', this.enteredInitialInvestment);
-    // console.log('Annual Investment:', this.enteredAnnualInvestment);
-    // console.log('Expected Return:', this.enteredExpectedReturn);
-    // console.log('Duration:', this.enteredDuration);
+    this.onReset();
   }
 }
